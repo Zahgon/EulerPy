@@ -15,63 +15,25 @@ from EulerPy.utils import clock, format_time, problem_glob
 # --cheat / -c
 def cheat(num):
     """View the answer to a problem."""
-    # Define solution before echoing in case solution does not exist
-    solution = click.style(Problem(num).solution, bold=True)
-    click.confirm("View answer to problem %i?" % num, abort=True)
-    click.echo("The answer to problem {} is {}.".format(num, solution))
+    pass
 
 
 # --generate / -g
 def generate(num, prompt_default=True):
     """Generates Python file for a problem."""
-    p = Problem(num)
-
-    problem_text = p.text
-
-    msg = "Generate file for problem %i?" % num
-    click.confirm(msg, default=prompt_default, abort=True)
-
-    # Allow skipped problem files to be recreated
-    if p.glob:
-        filename = str(p.file)
-        msg = '"{}" already exists. Overwrite?'.format(filename)
-        click.confirm(click.style(msg, fg='red'), abort=True)
-    else:
-        # Try to keep prefix consistent with existing files
-        previous_file = Problem(num - 1).file
-        prefix = previous_file.prefix if previous_file else ''
-        filename = p.filename(prefix=prefix)
-
-    header = 'Project Euler Problem %i' % num
-    divider = '=' * len(header)
-    text = '\n'.join([header, divider, '', problem_text])
-    content = '\n'.join(['"""', text, '"""'])
-
-    with open(filename, 'w') as f:
-        f.write(content + '\n\n\n')
-
-    click.secho('Successfully created "{}".'.format(filename), fg='green')
-
-    # Copy over problem resources if required
-    if p.resources:
-        p.copy_resources()
+    pass
 
 
 # --preview / -p
 def preview(num):
     """Prints the text of a problem."""
-    # Define problem_text before echoing in case problem does not exist
-    problem_text = Problem(num).text
-    click.secho("Project Euler Problem %i" % num, bold=True)
-    click.echo(problem_text)
+    pass
 
 
 # --skip / -s
 def skip(num):
     """Generates Python file for the next problem."""
-    click.echo("Current problem is problem %i." % num)
-    generate(num + 1, prompt_default=False)
-    Problem(num).file.change_suffix('-skipped')
+    pass
 
 
 # --verify / -v
@@ -142,94 +104,12 @@ def verify_all(num):
     Verifies all problem files in the current directory and
     prints an overview of the status of each problem.
     """
-
-    # Define various problem statuses
-    keys = ('correct', 'incorrect', 'error', 'skipped', 'missing')
-    symbols = ('C', 'I', 'E', 'S', '.')
-    colours = ('green', 'red', 'yellow', 'cyan', 'white')
-
-    status = OrderedDict(
-        (key, click.style(symbol, fg=colour, bold=True))
-        for key, symbol, colour in zip(keys, symbols, colours)
-    )
-
-    overview = {}
-
-    # Search through problem files using glob module
-    files = problem_glob()
-
-    # No Project Euler files in the current directory
-    if not files:
-        click.echo("No Project Euler files found in the current directory.")
-        sys.exit(1)
-
-    for file in files:
-        # Catch KeyboardInterrupt during verification to allow the user to
-        # skip the verification of a specific problem if it takes too long
-        try:
-            is_correct = verify(file.num, filename=str(file), exit=False)
-        except KeyboardInterrupt:
-            overview[file.num] = status['skipped']
-        else:
-            if is_correct is None:  # error was returned by problem file
-                overview[file.num] = status['error']
-            elif is_correct:
-                overview[file.num] = status['correct']
-            elif not is_correct:
-                overview[file.num] = status['incorrect']
-
-                # Attempt to add "skipped" suffix to the filename if the
-                # problem file is not the current problem. This is useful
-                # when the --verify-all is used in a directory containing
-                # files generated pre-v1.1 (before files with suffixes)
-                if file.num != num:
-                    file.change_suffix('-skipped')
-
-        # Separate each verification with a newline
-        click.echo()
-
-    # Print overview of the status of each problem
-    legend = ', '.join('{} = {}'.format(v, k) for k, v in status.items())
-
-    click.echo('-' * 63)
-    click.echo(legend + '\n')
-
-    # Rows needed for overview is based on the current problem number
-    num_of_rows = (num + 19) // 20
-
-    for row in range(1, num_of_rows + 1):
-        low, high = (row * 20) - 19, (row * 20)
-        click.echo("Problems {:03d}-{:03d}: ".format(low, high), nl=False)
-
-        for problem in range(low, high + 1):
-            # Add missing status to problems with no corresponding file
-            status = overview[problem] if problem in overview else '.'
-
-            # Separate problem indicators into groups of 5
-            spacer = '   ' if (problem % 5 == 0) else ' '
-
-            # Start a new line at the end of each row
-            click.secho(status + spacer, nl=(problem % 20 == 0))
-
-    click.echo()
+    pass
 
 
 def euler_options(fn):
     """Decorator to link CLI options with their appropriate functions"""
-    euler_functions = cheat, generate, preview, skip, verify, verify_all
-
-    # Reverse functions to print help page options in alphabetical order
-    for option in reversed(euler_functions):
-        name, docstring = option.__name__, option.__doc__
-        kwargs = {'flag_value': option, 'help': docstring}
-
-        # Apply flag(s) depending on whether or not name is a single word
-        flag = '--%s' % name.replace('_', '-')
-        flags = [flag] if '_' in name else [flag, '-%s' % name[0]]
-
-        fn = click.option('option', *flags, **kwargs)(fn)
-
-    return fn
+    pass
 
 
 @click.command(name='euler', options_metavar='[OPTION]')
