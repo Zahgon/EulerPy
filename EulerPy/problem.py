@@ -24,7 +24,7 @@ class Problem(object):
 
     def filename(self, prefix='', suffix='', extension='.py'):
         """Returns filename padded with leading zeros"""
-        return BASE_NAME.format(prefix, self.num, suffix, extension)
+        pass
 
     @property
     def glob(self):
@@ -93,14 +93,4 @@ class ProblemFile(object):
         pass
 
     def change_suffix(self, suffix):
-        if suffix == self.suffix:
-            return False
-
-        new_name = self.prefix + self.str_num + suffix + self.extension
-        os.rename(self.filename, new_name)
-
-        msg = 'Renamed "{}" to "{}".'.format(self.filename, new_name)
-        click.secho(msg, fg='yellow')
-        self.filename = new_name
-
-        return True
+        pass
